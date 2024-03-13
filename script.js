@@ -1,9 +1,37 @@
 const searchButton = document.querySelector(".search-button");
 searchButton.addEventListener("click", async function () {
-  const inputKeyword = document.querySelector(".input-keyword");
-  const movies = await getMovies(inputKeyword.value);
-  updateUI(movies);
+  try {
+    const inputKeyword = document.querySelector(".input-keyword");
+    const movies = await getMovies(inputKeyword.value);
+    updateUI(movies);
+  } catch (err) {
+    // console.log(err);
+    alert(err);
+  }
 });
+
+function getMovies(keyword) {
+  return fetch("http://www.omdbapi.com/?apikey=dca61bcc&s=" + keyword)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+      return res.json();
+    })
+    .then((res) => {
+      if (res.Response === "false") {
+        throw new Error(res.Error);
+      }
+      return res.Search;
+    });
+}
+
+function updateUI(movies) {
+  let cards = "";
+  movies.forEach((m) => (cards += showCards(m)));
+  const movieContainer = document.querySelector(".movie-container");
+  movieContainer.innerHTML = cards;
+}
 
 // Event binding
 document.addEventListener("click", async function (e) {
@@ -27,19 +55,6 @@ function updateUIDetail(m) {
   modalBody.innerHTML = movieDetail;
 }
 
-function getMovies(keyword) {
-  return fetch("http://www.omdbapi.com/?apikey=dca61bcc&s=" + keyword)
-    .then((res) => res.json())
-    .then((res) => res.Search);
-}
-
-function updateUI(movies) {
-  let cards = "";
-  movies.forEach((m) => (cards += showCards(m)));
-  const movieContainer = document.querySelector(".movie-container");
-  movieContainer.innerHTML = cards;
-}
-
 function showCards(m) {
   return `<div class="col-md-3 my-3">
     <div class="card">
@@ -54,7 +69,8 @@ function showCards(m) {
 }
 
 function showMovieDetail(m) {
-  return ` <div class="container-fluid">
+  return `
+  <div class="container-fluid">
     <div class="row">
       <div class="col-md-3">
         <img src="${m.Poster}" class="img-fluid" />
@@ -63,7 +79,7 @@ function showMovieDetail(m) {
       <ul class="list-group">
       <i class="list-group-item">
         <h4>${m.Title} (${m.Year})</h4>
-        </li>
+        </i>
           <li class="list-group-item"><strong>Dirictor : </strong>${m.Director}</li>
           <li class="list-group-item"><strong>Actros : </strong>${m.Actors}</li>
           <li class="list-group-item"><strong>Writer : </strong>${m.Writer}</li>
