@@ -55,7 +55,6 @@ function updateUIDetail(m) {
   modalBody.innerHTML = movieDetail;
 }
 
-<<<<<<< HEAD
 function getMovies(keyword) {
   return fetch("https://www.omdbapi.com/?apikey=dca61bcc&s=" + keyword)
     .then((res) => res.json())
@@ -69,8 +68,6 @@ function updateUI(movies) {
   movieContainer.innerHTML = cards;
 }
 
-=======
->>>>>>> 5641c87581a56e82b8310e52173a59895f4c8fd3
 function showCards(m) {
   return `<div class="col-md-3 my-3">
     <div class="card">
